@@ -1,7 +1,8 @@
 import { Person } from '@/models';
 import { removeFavorite } from '@/redux/states';
+// import { removeFavorite } from '@/redux/states';
 import { AppStore } from '@/redux/store';
-import { Delete } from '@mui/icons-material';
+// import { Delete } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
 import { DataGrid, GridRenderCellParams } from '@mui/x-data-grid';
 import React from 'react';
@@ -10,12 +11,14 @@ import { useDispatch, useSelector } from 'react-redux';
 export interface FavoriteTableInterface {}
 
 const FavoriteTable: React.FC<FavoriteTableInterface> = () => {
-  const pageSize = 5;
+
+  const pageSize:number[] = [5, 10, 25, 50, 100]
+
   const dispatch = useDispatch();
   const stateFavorites = useSelector((store: AppStore) => store.favorites);
 
   const handleClick = (person: Person) => {
-    dispatch(removeFavorite(person));
+     dispatch(removeFavorite(person));
   };
 
   const colums = [
@@ -28,8 +31,8 @@ const FavoriteTable: React.FC<FavoriteTableInterface> = () => {
       renderCell: (params: GridRenderCellParams) => (
         <>
           {
-            <IconButton color="secondary" aria-label="favorites" component="label" onClick={() => handleClick(params.row)}>
-              <Delete />
+            <IconButton color="error" aria-label="favorites" component="label" onClick={() => handleClick(params.row)}>
+              {/* <Delete /> */}
             </IconButton>
           }
         </>
@@ -54,22 +57,17 @@ const FavoriteTable: React.FC<FavoriteTableInterface> = () => {
       flex: 1,
       renderCell: (params: GridRenderCellParams) => <>{params.value}</>
     },
-    {
-      field: 'levelOfHappiness',
-      headerName: 'Level of happiness',
-      flex: 1,
-      renderCell: (params: GridRenderCellParams) => <>{params.value}</>
-    }
+    
   ];
   return (
     <DataGrid
       rows={stateFavorites}
       columns={colums}
       disableColumnSelector
-      disableSelectionOnClick
+      // disableSelectionOnClick
       autoHeight
-      pageSize={pageSize}
-      rowsPerPageOptions={[pageSize]}
+      pageSizeOptions={pageSize}
+    
       getRowId={(row: any) => row.id}
     />
   );

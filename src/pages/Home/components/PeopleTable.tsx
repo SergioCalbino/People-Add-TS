@@ -19,20 +19,19 @@ const PeopleTable: React.FC<PeopleTableInterface> = () => {
     const pageSize:number[] = [5, 10, 25, 50, 100]
     const [selectedPeople , setSelectedPeople  ] = useState<Person[]>([]);
   
-    const storePeople = useSelector((state:AppStore) => state.people)
+    const statePeople = useSelector((store: AppStore) => store.people);
+    const favoritePeople = useSelector((store: AppStore) => store.favorites);
     
   
     //Metodos de filtro
-    const findPerson = (person: Person) => !!selectedPeople.find(p => p.id === person.id) // Esto quiere decir que esta chequedo "Check"
-    const filterPerson = (person: Person) => selectedPeople.filter(p => p.id !== person.id) 
-  
-    const handleChange = (person: Person) => {
-      const filteredPeople = findPerson(person) ? filterPerson(person) : [...selectedPeople, person];
-      dispatch(addFavorite(filteredPeople)) 
-      setSelectedPeople(filteredPeople)
-  
-  
-    }
+    const findPerson = (person: Person) => !!favoritePeople.find(p => p.id === person.id);
+  const filterPerson = (person: Person) => favoritePeople.filter(p => p.id !== person.id);
+
+  const handleChange = (person: Person) => {
+    const filteredPeople = findPerson(person) ? filterPerson(person) : [...selectedPeople, person];
+    dispatch(addFavorite(filteredPeople));
+    setSelectedPeople(filteredPeople);
+  };
   
     const columns = [
       {
@@ -70,8 +69,17 @@ const PeopleTable: React.FC<PeopleTableInterface> = () => {
       minWidth: 150,
       renderCell: (params: GridRenderCellParams)=> <>{params.value }</>
     },
+    {
+      field: 'levelOfHappiness',
+      headerName: 'Happines',
+      flex: 1,
+      renderCell: (params: GridRenderCellParams) => <>{params.value}</>
+    }
   
   ]
+  useEffect(() => {
+    setSelectedPeople(favoritePeople);
+  }, [favoritePeople]);
 
   return (
     <div>
@@ -80,7 +88,7 @@ const PeopleTable: React.FC<PeopleTableInterface> = () => {
         disableRowSelectionOnClick
         autoHeight
         pageSizeOptions={pageSize}
-        rows={storePeople}
+        rows={statePeople}
         columns={columns}
         getRowId={(row: any) => row.id}
         />
